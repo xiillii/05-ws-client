@@ -16,6 +16,8 @@ const addListeners = (socket: Socket) => {
   const messageInput =
     document.querySelector<HTMLInputElement>('#message-input')!
 
+  const messagesUl = document.querySelector('#messages-ul')!
+
   socket.on('connect', () => {
     serverStatusLabel!.innerHTML = 'connected'
   })
@@ -49,4 +51,21 @@ const addListeners = (socket: Socket) => {
 
     messageInput.value = ''
   })
+
+  socket.on(
+    'message-from-server',
+    (payload: { fullname: string; message: string }) => {
+      const newMessage = `
+      <li>
+        <strong>${payload.fullname}</strong>
+        <span>${payload.message}</span>
+      </li>
+      `
+
+      const li = document.createElement('li')
+
+      li.innerHTML = newMessage
+      messagesUl.append(li)
+    }
+  )
 }
